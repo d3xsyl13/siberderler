@@ -1,0 +1,1583 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>d3xsyl | Siber Güvenlik, Sanallaştırma Mimarisi ve Resmi İmaj İndirme Portalı</title>
+  <style>
+    :root {
+      --gov-navy: #0b2545;
+      --gov-navy-dark: #06162a;
+      --gov-blue: #134074;
+      --gov-light-blue: #0284c7;
+      --gov-red: #c9182b;
+      --gov-red-dark: #9e1222;
+      --gov-bg: #f1f5f9;
+      --gov-card-bg: #ffffff;
+      --gov-border: #cbd5e1;
+      --gov-border-dark: #94a3b8;
+      --gov-text: #0f172a;
+      --gov-text-muted: #475569;
+      --font-official: 'Segoe UI', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+      --font-mono: Consolas, 'Courier New', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--gov-bg);
+      color: var(--gov-text);
+      font-family: var(--font-official);
+      line-height: 1.6;
+      font-size: 13.5px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* 1. Üst Güvenlik ve Bilgi Şeridi */
+    .gov-topbar {
+      background-color: var(--gov-navy-dark);
+      color: #cbd5e1;
+      font-size: 11px;
+      padding: 6px 0;
+      border-bottom: 2px solid var(--gov-red);
+    }
+
+    .container {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .topbar-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .topbar-badge {
+      background-color: var(--gov-red);
+      color: white;
+      padding: 2px 8px;
+      border-radius: 2px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      font-size: 10px;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .font-sizer {
+      display: flex;
+      gap: 3px;
+      align-items: center;
+    }
+
+    .font-btn {
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: white;
+      font-size: 10.5px;
+      padding: 1px 6px;
+      cursor: pointer;
+      border-radius: 2px;
+    }
+
+    /* 2. Kurumsal Header ve d3xsyl Mührü */
+    header.main-header {
+      background-color: #ffffff;
+      border-bottom: 1px solid var(--gov-border);
+      padding: 18px 0;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .brand-logo-crest {
+      width: 72px;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.25s ease, filter 0.25s ease;
+      flex-shrink: 0;
+    }
+
+    .brand-group:hover .brand-logo-crest {
+      transform: scale(1.05);
+      filter: drop-shadow(0 4px 14px rgba(201, 24, 43, 0.25));
+    }
+
+    .brand-name-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-titles h1 {
+      font-size: 26px;
+      font-weight: 900;
+      color: var(--gov-navy);
+      letter-spacing: 0.5px;
+      line-height: 1.1;
+      font-family: var(--font-mono), var(--font-official);
+    }
+
+    .brand-badge-official {
+      background: linear-gradient(135deg, var(--gov-red), var(--gov-red-dark));
+      color: white;
+      font-size: 9.5px;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 3px;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      box-shadow: 0 1px 4px rgba(201, 24, 43, 0.25);
+    }
+
+    .brand-titles .subtitle {
+      font-size: 11.5px;
+      color: var(--gov-text-muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 2px;
+    }
+
+    .brand-titles .kütük-no {
+      font-size: 11px;
+      color: var(--gov-red);
+      font-weight: 700;
+      margin-top: 2px;
+    }
+
+    .header-quick-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn-quick {
+      padding: 9px 16px;
+      border-radius: 3px;
+      font-size: 12px;
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      border: 1px solid transparent;
+      transition: all 0.15s;
+    }
+
+    .btn-quick-red {
+      background-color: var(--gov-red);
+      color: white;
+    }
+
+    .btn-quick-red:hover {
+      background-color: var(--gov-red-dark);
+    }
+
+    .btn-quick-outline {
+      background-color: transparent;
+      border-color: var(--gov-border-dark);
+      color: var(--gov-navy);
+    }
+
+    .btn-quick-outline:hover {
+      background-color: #e2e8f0;
+    }
+
+    /* 3. Resmi Gezinme Menüsü */
+    nav.official-nav {
+      background-color: var(--gov-navy);
+      border-top: 1px solid #1c3b60;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 999;
+    }
+
+    .nav-list {
+      display: flex;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .nav-link {
+      display: block;
+      padding: 12px 17px;
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      border-right: 1px solid rgba(255,255,255,0.08);
+      transition: background 0.15s;
+    }
+
+    .nav-link:hover, .nav-item.active .nav-link {
+      background-color: var(--gov-blue);
+    }
+
+    .nav-link.active-red {
+      background-color: var(--gov-red);
+    }
+
+    /* 4. Manşet ve Başvuru Şeridi */
+    .hero-banner-section {
+      background: linear-gradient(135deg, #091f3a 0%, #102e54 60%, #163864 100%);
+      color: white;
+      padding: 34px 0 38px;
+      border-bottom: 4px solid var(--gov-red);
+    }
+
+    .banner-grid {
+      display: grid;
+      grid-template-columns: 2fr 1.1fr;
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .main-announcement-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 4px;
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .banner-tag {
+      display: inline-block;
+      background: var(--gov-red);
+      color: white;
+      font-size: 10.5px;
+      font-weight: 800;
+      padding: 3px 9px;
+      border-radius: 2px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 12px;
+    }
+
+    .banner-title {
+      font-size: 23px;
+      font-weight: 800;
+      line-height: 1.35;
+      margin-bottom: 14px;
+      color: #ffffff;
+    }
+
+    .banner-text {
+      font-size: 13px;
+      color: #cbd5e1;
+      line-height: 1.7;
+      margin-bottom: 22px;
+    }
+
+    .banner-btn-group {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    /* Sağ Kılavuz Paneli */
+    .quick-services-box {
+      background: #ffffff;
+      color: var(--gov-text);
+      border-radius: 4px;
+      border: 1px solid var(--gov-border);
+      padding: 20px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .quick-services-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--gov-navy);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--gov-blue);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .quick-service-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 9px 12px;
+      border-radius: 3px;
+      background: #f8fafc;
+      border: 1px solid var(--gov-border);
+      text-decoration: none;
+      color: var(--gov-navy);
+      font-weight: 700;
+      font-size: 12px;
+      margin-bottom: 7px;
+      transition: all 0.15s;
+    }
+
+    .quick-service-link:hover {
+      background: #eef2f6;
+      border-color: var(--gov-blue);
+      transform: translateX(2px);
+    }
+
+    .service-icon {
+      width: 26px;
+      height: 26px;
+      background: #e2e8f0;
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gov-blue);
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+
+    /* 5. Resmi Metrikler */
+    .official-metrics-strip {
+      background-color: #ffffff;
+      border-bottom: 1px solid var(--gov-border);
+      padding: 16px 0;
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+
+    .metric-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 4px 12px;
+      border-right: 1px solid var(--gov-border);
+    }
+
+    .metric-item:last-child {
+      border-right: none;
+    }
+
+    .metric-icon-wrap {
+      width: 42px;
+      height: 42px;
+      background-color: #f1f5f9;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gov-blue);
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .metric-data .num {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--gov-navy);
+      line-height: 1.1;
+    }
+
+    .metric-data .label {
+      font-size: 10.5px;
+      font-weight: 600;
+      color: var(--gov-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    /* 6. Bölüm Yapıları */
+    .page-section {
+      padding: 42px 0;
+    }
+
+    .section-header-gov {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      border-bottom: 2px solid var(--gov-blue);
+      padding-bottom: 10px;
+      margin-bottom: 22px;
+    }
+
+    .section-header-gov h3 {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--gov-navy);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-header-gov h3::before {
+      content: "";
+      display: inline-block;
+      width: 5px;
+      height: 17px;
+      background-color: var(--gov-red);
+      border-radius: 2px;
+    }
+
+    /* Gridler */
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+    }
+
+    /* İndirme Tablosu */
+    .download-table-wrap {
+      background: #ffffff;
+      border: 1px solid var(--gov-border);
+      border-radius: 4px;
+      overflow-x: auto;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+    }
+
+    .gov-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12.5px;
+    }
+
+    .gov-table th {
+      background: var(--gov-navy);
+      color: white;
+      text-align: left;
+      padding: 12px 14px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .gov-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--gov-border);
+      color: #334155;
+      vertical-align: middle;
+    }
+
+    .gov-table tr:hover {
+      background-color: #f8fafc;
+    }
+
+    .btn-download-direct {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background-color: var(--gov-red);
+      color: white;
+      padding: 6px 12px;
+      border-radius: 3px;
+      font-weight: 700;
+      font-size: 11.5px;
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+
+    .btn-download-direct:hover {
+      background-color: var(--gov-red-dark);
+    }
+
+    .btn-download-blue {
+      background-color: var(--gov-blue);
+    }
+
+    .btn-download-blue:hover {
+      background-color: var(--gov-navy);
+    }
+
+    /* Resmi SHA-256 Doğrulama Kutusu */
+    .sha-verify-box {
+      background: #091a2e;
+      color: #e2e8f0;
+      border: 1px solid #1e3a5f;
+      border-left: 4px solid var(--gov-red);
+      padding: 16px 20px;
+      border-radius: 3px;
+      margin-top: 20px;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .sha-verify-box code {
+      font-family: var(--font-mono);
+      background: #0f2b4d;
+      color: #38bdf8;
+      padding: 2px 6px;
+      border-radius: 3px;
+    }
+
+    /* VM Bilgi Kartları */
+    .vm-card {
+      background: #ffffff;
+      border: 1px solid var(--gov-border);
+      border-top: 4px solid var(--gov-navy);
+      border-radius: 3px;
+      padding: 20px;
+      transition: all 0.2s;
+    }
+
+    .vm-card:hover {
+      border-top-color: var(--gov-red);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    .vm-badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 2px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .badge-blue { background: #e0f2fe; color: #0284c7; }
+    .badge-red { background: #fee2e2; color: #b91c1c; }
+    .badge-green { background: #dcfce7; color: #15803d; }
+    .badge-purple { background: #f3e8ff; color: #7e22ce; }
+
+    .vm-card h4 {
+      font-size: 14.5px;
+      font-weight: 800;
+      color: var(--gov-navy);
+      margin-bottom: 8px;
+    }
+
+    .vm-card p {
+      font-size: 12px;
+      color: var(--gov-text-muted);
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+
+    /* Lab Hesaplayıcı */
+    .calculator-box {
+      background: #ffffff;
+      border: 1px solid var(--gov-border);
+      border-radius: 4px;
+      padding: 24px;
+    }
+
+    .calc-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .calc-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--gov-navy);
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .calc-select {
+      width: 100%;
+      padding: 9px 10px;
+      border: 1px solid var(--gov-border);
+      border-radius: 3px;
+      font-size: 12.5px;
+      color: var(--gov-text);
+      background: #ffffff;
+    }
+
+    .calc-result-box {
+      background: #f8fafc;
+      border: 1px solid var(--gov-blue);
+      border-left: 4px solid var(--gov-blue);
+      border-radius: 3px;
+      padding: 16px;
+      margin-top: 14px;
+    }
+
+    /* Form */
+    .official-form-card {
+      background: #ffffff;
+      border: 1px solid var(--gov-border);
+      border-radius: 4px;
+      padding: 28px;
+    }
+
+    .input-gov {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1px solid var(--gov-border);
+      border-radius: 3px;
+      font-size: 12.5px;
+      font-family: inherit;
+    }
+
+    .btn-submit-gov {
+      background-color: var(--gov-navy);
+      color: white;
+      border: none;
+      padding: 11px 26px;
+      font-size: 13px;
+      font-weight: 700;
+      border-radius: 3px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.15s;
+    }
+
+    .btn-submit-gov:hover {
+      background-color: var(--gov-blue);
+    }
+
+    /* Footer */
+    footer.gov-footer {
+      background-color: #081627;
+      color: #94a3b8;
+      font-size: 11.5px;
+      border-top: 4px solid var(--gov-red);
+      padding: 36px 0 18px;
+    }
+
+    .footer-grid-gov {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1.2fr;
+      gap: 28px;
+      margin-bottom: 28px;
+    }
+
+    .footer-col h5 {
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #1e293b;
+      padding-bottom: 6px;
+    }
+
+    .footer-links-list {
+      list-style: none;
+    }
+
+    .footer-links-list li {
+      margin-bottom: 7px;
+    }
+
+    .footer-links-list a {
+      color: #94a3b8;
+      text-decoration: none;
+    }
+
+    .footer-links-list a:hover {
+      color: #ffffff;
+    }
+
+    .footer-bottom-gov {
+      border-top: 1px solid #1e293b;
+      padding-top: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+    }
+
+    @media (max-width: 850px) {
+      .banner-grid, .grid-3, .grid-2, .metrics-grid, .calc-row, .footer-grid-gov {
+        grid-template-columns: 1fr;
+      }
+      .metric-item { border-right: none; border-bottom: 1px solid var(--gov-border); }
+      .header-content { flex-direction: column; text-align: center; }
+      .nav-list { flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1. Üst Güvenlik ve Bilgi Şeridi -->
+  <div class="gov-topbar">
+    <div class="container">
+      <div class="topbar-content">
+        <div class="topbar-left">
+          <span class="topbar-badge">ULUSAL TEKNİK BİLGİ MERKEZİ</span>
+          <span>Siber Güvenlik, Sanallaştırma Mimarisi ve Resmi İmaj İndirme Masası</span>
+          <span style="color: #64748b;">|</span>
+          <span>Kılavuz Standart No: <strong>STD-2026-V7</strong></span>
+        </div>
+        <div class="topbar-right">
+          <span id="liveDateStr">17 Eylül 2026, Perşembe</span>
+          <span style="color: #64748b;">|</span>
+          <a href="#resmi-indirme-masasi" style="color: #cbd5e1; text-decoration: none; font-weight: bold;">İndirme Deposu (Downloads)</a>
+          <span style="color: #64748b;">|</span>
+          <div class="font-sizer">
+            <button class="font-btn" onclick="changeFontSize(-1)" title="Yazı Boyutunu Küçült">A-</button>
+            <button class="font-btn" onclick="changeFontSize(1)" title="Yazı Boyutunu Büyüt">A+</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Kurumsal Header ve d3xsyl Mührü -->
+  <header class="main-header">
+    <div class="container">
+      <div class="header-content">
+        <a href="#anasayfa" class="brand-group">
+          <!-- d3xsyl Yüksek Teknolojili Resmi Kalkan Mührü -->
+          <div class="brand-logo-crest">
+            <svg width="68" height="68" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="crestBg" x1="10" y1="5" x2="90" y2="95" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#0e2a4d" />
+                  <stop offset="50%" stop-color="#0b2545" />
+                  <stop offset="100%" stop-color="#06162a" />
+                </linearGradient>
+                <linearGradient id="crestBorder" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#ef4444" />
+                  <stop offset="40%" stop-color="#c9182b" />
+                  <stop offset="80%" stop-color="#991b1b" />
+                  <stop offset="100%" stop-color="#f59e0b" />
+                </linearGradient>
+                <linearGradient id="vmCyan" x1="30" y1="25" x2="70" y2="65" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#38bdf8" />
+                  <stop offset="100%" stop-color="#0284c7" />
+                </linearGradient>
+                <filter id="crestShadow" x="-10%" y="-10%" width="120%" height="120%">
+                  <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#07192f" flood-opacity="0.35"/>
+                </filter>
+              </defs>
+
+              <!-- Dış Güvenlik Kalkanı -->
+              <path d="M50 4 L88 18 L88 56 C88 74 50 95 50 95 C50 95 12 74 12 56 L12 18 Z" 
+                    fill="url(#crestBg)" stroke="url(#crestBorder)" stroke-width="3" filter="url(#crestShadow)"/>
+
+              <!-- İç Siber Ağ Çemberi -->
+              <path d="M50 11 L81 23 L81 54 C81 68 50 86 50 86 C50 86 19 68 19 54 L19 23 Z" 
+                    fill="none" stroke="#38bdf8" stroke-width="1.2" stroke-dasharray="4 2" opacity="0.45"/>
+
+              <!-- Sanallaştırma Katmanları (Stacked VM Layers) -->
+              <path d="M50 21 L67 30 L50 39 L33 30 Z" fill="url(#vmCyan)" opacity="0.95"/>
+              <path d="M33 30 L50 39 L50 43 L33 34 Z" fill="#0284c7" opacity="0.85"/>
+              <path d="M50 39 L67 30 L67 34 L50 43 Z" fill="#0369a1" opacity="0.85"/>
+
+              <path d="M50 35 L67 44 L50 53 L33 44 Z" fill="#38bdf8" opacity="0.5"/>
+              <path d="M33 44 L50 53 L50 57 L33 48 Z" fill="#0284c7" opacity="0.6"/>
+              <path d="M50 53 L67 44 L67 48 L50 57 Z" fill="#0369a1" opacity="0.6"/>
+
+              <!-- Merkezi Güvenlik Kalkanı & Kilit (Merkez Savunma) -->
+              <path d="M50 46 L65 53 L65 67 C65 76 50 82 50 82 C50 82 35 76 35 67 L35 53 Z" 
+                    fill="#c9182b" stroke="#ffffff" stroke-width="1.5"/>
+
+              <!-- d3x Monogram & Kilit -->
+              <text x="50" y="66" text-anchor="middle" font-family="'Consolas', monospace" font-size="9" font-weight="900" fill="#ffffff" letter-spacing="0.5">d3x</text>
+              <circle cx="50" cy="72" r="1.8" fill="#ffffff"/>
+              <rect x="49" y="72" width="2" height="4" fill="#ffffff"/>
+
+              <!-- Üst Zirve Yıldızı -->
+              <polygon points="50,7 51.5,10.5 55.5,10.5 52.2,12.8 53.5,16.5 50,14.2 46.5,16.5 47.8,12.8 44.5,10.5 48.5,10.5" fill="#f59e0b"/>
+            </svg>
+          </div>
+          <div class="brand-titles">
+            <div class="brand-name-row">
+              <h1>d3xsyl</h1>
+              <span class="brand-badge-official">RESMİ PORTAL</span>
+            </div>
+            <div class="subtitle">SİBER GÜVENLİK VE SANALLAŞTIRMA ARAŞTIRMA PORTALI</div>
+            <div class="kütük-no">Resmi Hipervizör İndirmeleri, İmaj Doğrulama (SHA-256) ve İzole Savunma Mimarisi</div>
+          </div>
+        </a>
+
+        <div class="header-quick-actions">
+          <a href="#resmi-indirme-masasi" class="btn-quick btn-quick-red">
+            📥 Resmi İndirme Masası
+          </a>
+          <a href="#lab-hesaplayici" class="btn-quick btn-quick-outline">
+            ⚡ Donanım Hesaplayıcı
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 3. Resmi Gezinme Menüsü -->
+  <nav class="official-nav">
+    <div class="container">
+      <ul class="nav-list">
+        <li class="nav-item active"><a href="#anasayfa" class="nav-link">Ana Sayfa</a></li>
+        <li class="nav-item"><a href="#resmi-indirme-masasi" class="nav-link active-red">📥 Resmi İndirmeler & İmajlar</a></li>
+        <li class="nav-item"><a href="#sanal-makine-nedir" class="nav-link">Sanallaştırma Mimarisi</a></li>
+        <li class="nav-item"><a href="#kullanim-amaclari" class="nav-link">Siber Güvenlikte Kullanım Amaçları</a></li>
+        <li class="nav-item"><a href="#ag-modlari" class="nav-link">Sanal Ağ (Networking) Modları</a></li>
+        <li class="nav-item"><a href="#siber-savunma" class="nav-link">Siber Savunma Kılavuzları</a></li>
+        <li class="nav-item"><a href="#lab-hesaplayici" class="nav-link">Donanım Kapasite Hesaplayıcı</a></li>
+        <li class="nav-item"><a href="#iletisim" class="nav-link">Topluluk & İletişim</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- 4. Manşet ve Başvuru Şeridi -->
+  <section class="hero-banner-section" id="anasayfa">
+    <div class="container">
+      <div class="banner-grid">
+        
+        <div class="main-announcement-card">
+          <div>
+            <span class="banner-tag">RESMİ BİLDİRİ • STANDART KILAVUZ</span>
+            <h2 class="banner-title">
+              Sanal Makineler, İzole Test Ortamları ve Güvenli Siber Savunma Kılavuzu
+            </h2>
+            <p class="banner-text">
+              Bu teknik başvuru portalı; siber güvenlik araştırmacıları, mesleki lise öğrencileri ve uzmanlar için sanallaştırma mimarisini (Hypervisor Type 1/2), izole zararlı yazılım analizini ve resmi sanal makine indirme depolarını tek bir çatı altında toplamıştır.
+            </p>
+          </div>
+          <div class="banner-btn-group">
+            <a href="#resmi-indirme-masasi" class="btn-quick btn-quick-red" style="padding: 10px 20px;">
+              📥 Kali Linux, FlareVM & VMware İndirme Deposu
+            </a>
+            <a href="#kullanim-amaclari" class="btn-quick btn-quick-outline" style="color: white; border-color: rgba(255,255,255,0.4); padding: 10px 20px;">
+              🛡️ Sanal Makine Kullanım Amaçları
+            </a>
+          </div>
+        </div>
+
+        <div class="quick-services-box">
+          <div class="quick-services-title">
+            <span>🏛️ Hızlı Hizmet ve Başvuru Masası</span>
+          </div>
+
+          <a href="#resmi-indirme-masasi" class="quick-service-link">
+            <div class="service-icon">🐉</div>
+            <div>
+              <div>Kali Linux Sanal Makine İmajı (.ova)</div>
+              <small style="color: var(--gov-text-muted); font-size: 10.5px;">Resmi VirtualBox & VMware Paketi</small>
+            </div>
+          </a>
+
+          <a href="#resmi-indirme-masasi" class="quick-service-link">
+            <div class="service-icon">🧪</div>
+            <div>
+              <div>Mandiant FlareVM & REMnux</div>
+              <small style="color: var(--gov-text-muted); font-size: 10.5px;">Zararlı Yazılım Analiz Ortamları</small>
+            </div>
+          </a>
+
+          <a href="#resmi-indirme-masasi" class="quick-service-link">
+            <div class="service-icon">⚙️</div>
+            <div>
+              <div>VirtualBox & VMware Workstation Pro</div>
+              <small style="color: var(--gov-text-muted); font-size: 10.5px;">Bireysel Ücretsiz Resmi Dağıtımlar</small>
+            </div>
+          </a>
+
+          <a href="#lab-hesaplayici" class="quick-service-link">
+            <div class="service-icon">🧮</div>
+            <div>
+              <div>Sanal Lab Donanım Hesaplayıcı</div>
+              <small style="color: var(--gov-text-muted); font-size: 10.5px;">RAM ve CPU tahsis hesaplama</small>
+            </div>
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Metrikler Şeridi -->
+  <div class="official-metrics-strip">
+    <div class="container">
+      <div class="metrics-grid">
+        <div class="metric-item">
+          <div class="metric-icon-wrap">🔒</div>
+          <div class="metric-data">
+            <div class="num">%100 İZOLASYON</div>
+            <div class="label">Fiziksel Ana Makineyi Koruma</div>
+          </div>
+        </div>
+
+        <div class="metric-item">
+          <div class="metric-icon-wrap">⚡</div>
+          <div class="metric-data">
+            <div class="num">SNAPSHOT</div>
+            <div class="label">Tek Tıkla Temiz Duruma Dönüş</div>
+          </div>
+        </div>
+
+        <div class="metric-item">
+          <div class="metric-icon-wrap">🌐</div>
+          <div class="metric-data">
+            <div class="num">HOST-ONLY</div>
+            <div class="label">İnternetsiz Güvenli Karantina</div>
+          </div>
+        </div>
+
+        <div class="metric-item">
+          <div class="metric-icon-wrap">📜</div>
+          <div class="metric-data">
+            <div class="num">SHA-256 HASH</div>
+            <div class="label">Bütünlük ve Doğrulama Standartı</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. RESMİ İNDİRME MASASI (DOWNLOADS & VERIFICATION) -->
+  <section class="page-section" id="resmi-indirme-masasi">
+    <div class="container">
+      <div class="section-header-gov">
+        <h3>Resmi Yazılım, Hipervizör ve Sanal Makine İndirme Deposu</h3>
+        <span style="font-size: 12px; color: var(--gov-red); font-weight: 700;">Resmi Üretici Kaynakları ve Doğrudan İndirme Bağlantıları</span>
+      </div>
+
+      <p style="font-size: 13px; color: var(--gov-text-muted); margin-bottom: 20px;">
+        Aşağıdaki tüm bağlantılar, ilgili yazılımların ve sanal makine imajlarının <strong>resmi geliştiricilerine (Official Vendors)</strong> ait doğrulanmış güvenli indirme kanallarıdır. Üçüncü parti güvenilmeyen sitelerden asla imaj indirmeyiniz.
+      </p>
+
+      <div class="download-table-wrap">
+        <table class="gov-table">
+          <thead>
+            <tr>
+              <th>Yazılım / Dağıtım</th>
+              <th>Tür & Platform</th>
+              <th>Kullanım Amacı</th>
+              <th>Lisans / Durum</th>
+              <th>Resmi İndirme Bağlantısı</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- 1. Kali Linux -->
+            <tr>
+              <td>
+                <strong style="color: var(--gov-navy); font-size: 13.5px;">🐉 Kali Linux</strong><br>
+                <small style="color: var(--gov-text-muted);">OffSec Resmi Sanal Makine (VM)</small>
+              </td>
+              <td>Önceden Hazırlanmış Sanal Makine (.7z / .ova)<br><small>VirtualBox & VMware Uyumlu</small></td>
+              <td>Penetrasyon testi, zafiyet tarama, siber güvenlik denetimi</td>
+              <td><span style="color: #15803d; font-weight: bold;">Ücretsiz / Açık Kaynak</span></td>
+              <td>
+                <a href="https://www.kali.org/get-kali/#kali-virtual-machines" target="_blank" class="btn-download-direct">
+                  📥 Kali VM Resmi İndir →
+                </a>
+              </td>
+            </tr>
+
+            <!-- 2. Oracle VirtualBox -->
+            <tr>
+              <td>
+                <strong style="color: var(--gov-navy); font-size: 13.5px;">⚙️ Oracle VM VirtualBox</strong><br>
+                <small style="color: var(--gov-text-muted);">Oracle Corporation</small>
+              </td>
+              <td>Tip-2 Hipervizör (Kurulum Yazılımı)<br><small>Windows / macOS / Linux</small></td>
+              <td>Bilgisayarınızda sanal makineleri çalıştırmak için gerekli ana motor</td>
+              <td><span style="color: #15803d; font-weight: bold;">Ücretsiz / GPL v3</span></td>
+              <td>
+                <a href="https://www.virtualbox.org/wiki/Downloads" target="_blank" class="btn-download-direct btn-download-blue">
+                  📥 VirtualBox Resmi İndir →
+                </a>
+              </td>
+            </tr>
+
+            <!-- 3. VMware Workstation Pro -->
+            <tr>
+              <td>
+                <strong style="color: var(--gov-navy); font-size: 13.5px;">💻 VMware Workstation Pro</strong><br>
+                <small style="color: var(--gov-text-muted);">Broadcom / VMware</small>
+              </td>
+              <td>Tip-2 Hipervizör (Gelişmiş Sanallaştırma)<br><small>Windows & Linux</small></td>
+              <td>Yüksek performanslı sanal laboratuvar ve gelişmiş ağ yapılandırması</td>
+              <td><span style="color: #0284c7; font-weight: bold;">Bireysel Kullanıma Ücretsiz</span></td>
+              <td>
+                <a href="https://www.vmware.com/products/desktop-hypervisors/workstation-and-fusion" target="_blank" class="btn-download-direct btn-download-blue">
+                  📥 VMware Pro Resmi İndir →
+                </a>
+              </td>
+            </tr>
+
+            <!-- 4. FlareVM -->
+            <tr>
+              <td>
+                <strong style="color: var(--gov-navy); font-size: 13.5px;">🧪 Mandiant FlareVM</strong><br>
+                <small style="color: var(--gov-text-muted);">Google Cloud / Mandiant</small>
+              </td>
+              <td>Windows Tabanlı Malware Analiz Paketi<br><small>Windows 10/11 İçin Otomatik Kurulum</small></td>
+              <td>Tersine mühendislik, statik ve dinamik zararlı yazılım incelemesi (Ghidra, x64dbg)</td>
+              <td><span style="color: #15803d; font-weight: bold;">Açık Kaynak (GitHub)</span></td>
+              <td>
+                <a href="https://github.com/mandiant/flare-vm" target="_blank" class="btn-download-direct">
+                  📥 FlareVM GitHub Reposu →
+                </a>
+              </td>
+            </tr>
+
+            <!-- 5. REMnux -->
+            <tr>
+              <td>
+                <strong style="color: var(--gov-navy); font-size: 13.5px;">🔬 REMnux Linux</strong><br>
+                <small style="color: var(--gov-text-muted);">Lenny Zeltser / SANS Mimarisi</small>
+              </td>
+              <td>Linux Tabanlı Zararlı Analiz Cihazı (OVA)<br><small>VirtualBox & VMware Uyumlu</small></td>
+              <td>Şüpheli PDF, Office makroları ve botnet ağ trafiği tersine mühendisliği</td>
+              <td><span style="color: #15803d; font-weight: bold;">Ücretsiz / Açık Kaynak</span></td>
+              <td>
+                <a href="https://docs.remnux.org/install-distro/get-virtual-appliance" target="_blank" class="btn-download-direct">
+                  📥 REMnux OVA Resmi İndir →
+                </a>
+              </td>
+            </tr>
+
+            <!-- 6. Parrot Security OS -->
+            <tr>
+              <td>
+                <strong style="color: var(--gov-navy); font-size: 13.5px;">🦜 Parrot Security OS</strong><br>
+                <small style="color: var(--gov-text-muted);">Parrot Project</small>
+              </td>
+              <td>Güvenlik ve Gizlilik Odaklı Dağıtım (ISO / VM)<br><small>Düşük Donanımlar İçin Çok Hafif</small></td>
+              <td>Adli bilişim, sızma testi, anonimlik ve yazılım geliştirme</td>
+              <td><span style="color: #15803d; font-weight: bold;">Ücretsiz / Açık Kaynak</span></td>
+              <td>
+                <a href="https://www.parrotsec.org/download/" target="_blank" class="btn-download-direct">
+                  📥 Parrot OS Resmi İndir →
+                </a>
+              </td>
+            </tr>
+
+            <!-- 7. Metasploitable 2 (Hedef Makine) -->
+            <tr>
+              <td>
+                <strong style="color: var(--gov-navy); font-size: 13.5px;">🎯 Metasploitable 2</strong><br>
+                <small style="color: var(--gov-text-muted);">Rapid7 Resmi Test İmajı</small>
+              </td>
+              <td>Kasıtlı Olarak Zafiyetli Bırakılmış Sanal Makine<br><small>Zip / Sanal Disk (.vmdk)</small></td>
+              <td>Öğrencilerin yasal olarak sızma testi ve savunma pratikleri yapması için hedef</td>
+              <td><span style="color: #15803d; font-weight: bold;">Ücretsiz Eğitim İmajı</span></td>
+              <td>
+                <a href="https://sourceforge.net/projects/metasploitable/files/Metasploitable2/" target="_blank" class="btn-download-direct">
+                  📥 Metasploitable Resmi İndir →
+                </a>
+              </td>
+            </tr>
+
+            <!-- 8. DVWA -->
+            <tr>
+              <td>
+                <strong style="color: var(--gov-navy); font-size: 13.5px;">💉 DVWA (Damn Vulnerable Web App)</strong><br>
+                <small style="color: var(--gov-text-muted);">Ryan Dewhurst</small>
+              </td>
+              <td>Web Zafiyet Laboratuvarı<br><small>PHP / MySQL Hedef Web Uygulaması</small></td>
+              <td>SQL Injection, XSS ve CSRF açıklarını öğrenmek ve savunmak için standart lab</td>
+              <td><span style="color: #15803d; font-weight: bold;">Açık Kaynak (GPL)</span></td>
+              <td>
+                <a href="https://github.com/digininja/DVWA" target="_blank" class="btn-download-direct">
+                  📥 DVWA GitHub Reposu →
+                </a>
+              </td>
+            </tr>
+
+            <!-- 9. Proxmox VE (Tip-1) -->
+            <tr>
+              <td>
+                <strong style="color: var(--gov-navy); font-size: 13.5px;">🏢 Proxmox VE (PVE)</strong><br>
+                <small style="color: var(--gov-text-muted);">Proxmox Server Solutions</small>
+              </td>
+              <td>Tip-1 Bare-Metal Kurumsal Hipervizör (ISO)<br><small>Doğrudan Sunucuya Kurulum</small></td>
+              <td>Kendi veri merkezinizde onlarca sanal makineyi web arayüzünden yönetmek için</td>
+              <td><span style="color: #15803d; font-weight: bold;">Açık Kaynak / Kurumsal</span></td>
+              <td>
+                <a href="https://www.proxmox.com/en/downloads" target="_blank" class="btn-download-direct btn-download-blue">
+                  📥 Proxmox VE Resmi İndir →
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Resmi Doğrulama (SHA-256) Kılavuzu -->
+      <div class="sha-verify-box">
+        <strong style="color: #f87171; text-transform: uppercase; letter-spacing: 0.5px;">🔒 Resmi Güvenlik Talimatı: İndirilen İmajların SHA-256 Bütünlük Doğrulaması</strong><br>
+        İndirdiğiniz sanal makine imajının veya ISO dosyasının saldırganlar tarafından değiştirilmediğinden emin olmak için dosya özetini (Hash) kontrol ediniz. Windows PowerShell terminalinizde aşağıdaki komutu çalıştırınız:
+        <br><br>
+        <code>Get-FileHash -Path "C:\İndirilenler\kali-linux-virtualbox.7z" -Algorithm SHA256</code>
+        <br><br>
+        Ekrana gelen 64 karakterlik SHA-256 kodunun, resmi üretici web sitesindeki (Örn: Kali.org) değerle <strong>birebir aynı</strong> olduğunu teyit ediniz.
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. Sanal Makine Nedir & Hipervizör Mimarisi -->
+  <section class="page-section" id="sanal-makine-nedir" style="background: #ffffff; border-top: 1px solid var(--gov-border); border-bottom: 1px solid var(--gov-border);">
+    <div class="container">
+      <div class="section-header-gov">
+        <h3>Sanal Makine (Virtual Machine) Mimarisi ve Hipervizör Sınıflandırması</h3>
+        <span style="font-size: 12px; color: var(--gov-text-muted);">Donanım Soyutlama Katmanı</span>
+      </div>
+
+      <div style="background: #f8fafc; border: 1px solid var(--gov-border); border-radius: 4px; padding: 22px; margin-bottom: 22px;">
+        <p style="font-size: 13px; color: #334155; line-height: 1.7; margin-bottom: 16px;">
+          <strong>Sanal Makine (VM):</strong> Fiziksel bilgisayarın donanım kaynaklarını (CPU, RAM, Disk, Ağ) Hipervizör katmanı aracılığıyla paylaştırarak, ana işletim sisteminden tamamen izole bağımsız sistemler çalıştırma teknolojisidir.
+        </p>
+
+        <div class="grid-2">
+          <!-- Tip-1 -->
+          <div style="background: white; border: 1px solid var(--gov-border); border-left: 4px solid var(--gov-navy); padding: 16px; border-radius: 3px;">
+            <span class="vm-badge badge-blue">TİP-1 (BARE-METAL) HİPERVİZÖR</span>
+            <h4 style="font-size: 14px; font-weight: 800; color: var(--gov-navy); margin: 6px 0;">Doğrudan Donanım Üzerinde Çalışanlar</h4>
+            <p style="font-size: 12px; color: var(--gov-text-muted); line-height: 1.6;">
+              Fiziksel sunucunun anakart ve işlemcisine doğrudan kurulur. Arada Windows gibi bir ana işletim sistemi bulunmadığı için gecikme (latency) neredeyse sıfırdır.
+            </p>
+            <div style="font-size: 11.5px; font-weight: 700; color: var(--gov-navy); margin-top: 8px;">
+              Resmi Örnekler: Proxmox VE, VMware ESXi, KVM.
+            </div>
+          </div>
+
+          <!-- Tip-2 -->
+          <div style="background: white; border: 1px solid var(--gov-border); border-left: 4px solid var(--gov-red); padding: 16px; border-radius: 3px;">
+            <span class="vm-badge badge-red">TİP-2 (HOSTED) HİPERVİZÖR</span>
+            <h4 style="font-size: 14px; font-weight: 800; color: var(--gov-navy); margin: 6px 0;">İşletim Sistemi İçinde Çalışanlar</h4>
+            <p style="font-size: 12px; color: var(--gov-text-muted); line-height: 1.6;">
+              Mevcut kullandığınız Windows veya macOS içine normal bir program gibi kurulur. Lise öğrencileri ve bireysel siber güvenlik laboratuvarları için en ideal ve pratik çözümdür.
+            </p>
+            <div style="font-size: 11.5px; font-weight: 700; color: var(--gov-navy); margin-top: 8px;">
+              Resmi Örnekler: Oracle VM VirtualBox, VMware Workstation Pro.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. Siber Güvenlikte Sanal Makinelerin 5 Temel Kullanım Amacı -->
+  <section class="page-section" id="kullanim-amaclari">
+    <div class="container">
+      <div class="section-header-gov">
+        <h3>Siber Güvenlikte Sanal Makinelerin 5 Temel Kullanım Amacı</h3>
+        <span style="font-size: 12px; color: var(--gov-red); font-weight: 700;">Neden Sanal Makine Kullanmak Zorundayız?</span>
+      </div>
+
+      <div class="grid-3">
+        <!-- 1 -->
+        <div class="vm-card">
+          <span class="vm-badge badge-red">1. İZOLASYON & FİZİKSEL BİLGİSAYARI KORUMA</span>
+          <h4>Fiziksel Sisteme Bulaşmayı Sıfırlama</h4>
+          <p>
+            Canlı bir fidye virüsünü (Ransomware) ana bilgisayarınızda çalıştırırsanız tüm fotoğraflarınız, ödevleriniz ve diskleriniz şifrelenir. Sanal makine içinde çalıştırdığınızda virüs sanal disk kafesinde hapsolur, ana Windows sisteminize sıçrayamaz.
+          </p>
+        </div>
+
+        <!-- 2 -->
+        <div class="vm-card">
+          <span class="vm-badge badge-green">2. ANLIK GÖRÜNTÜ (SNAPSHOT)</span>
+          <h4>Zamanda Geri Gitme & Hızlı Kurtarma</h4>
+          <p>
+            Sanal makinenin temiz durumundayken tek tıkla bir "Snapshot" alırsınız. Sisteme ölümcül bir virüs bulaşıp çökse bile, 2 saniyede temiz ilk haline dönebilirsiniz. Format atmaya veya saatlerce yeniden kurulum yapmaya gerek kalmaz.
+          </p>
+        </div>
+
+        <!-- 3 -->
+        <div class="vm-card">
+          <span class="vm-badge badge-blue">3. MALWARE TERSİNE MÜHENDİSLİK</span>
+          <h4>Zararlı Davranış ve Ağ Paket Analizi</h4>
+          <p>
+            Virüs arka planda hangi IP'ye bağlanıyor? Kayıt defterinde (Registry) hangi anahtarları değiştirdi? FlareVM veya REMnux sanal makineleri ile Process Hacker ve Wireshark üzerinden tüm adımlar kaydedilir.
+          </p>
+        </div>
+
+        <!-- 4 -->
+        <div class="vm-card">
+          <span class="vm-badge badge-purple">4. SIZMA TESTİ & PENTEST ORTAMI</span>
+          <h4>Tek İmajda 600+ Siber Güvenlik Aracı</h4>
+          <p>
+            Kali Linux veya Parrot OS sanal makinelerinde Nmap, Wireshark, Burp Suite, Metasploit, John The Ripper gibi profesyonel araçlar önceden kurulu ve yapılandırılmış olarak gelir.
+          </p>
+        </div>
+
+        <!-- 5 -->
+        <div class="vm-card">
+          <span class="vm-badge badge-blue">5. ZAAFİYETLİ HEDEF LABORATUVARLAR</span>
+          <h4>%100 Yasal Eğitim ve CTF Çalışması</h4>
+          <p>
+            İnternetteki gerçek bir siteye saldırmak kanunen suçtur. Ancak sanal makinenize kuracağınız Metasploitable veya DVWA zafiyetli hedeflerini hackleyerek savunma açıklarını güvenle ve yasal olarak öğrenebilirsiniz.
+          </p>
+        </div>
+
+        <!-- 6 -->
+        <div class="vm-card">
+          <span class="vm-badge badge-green">6. WINDOWS SANDBOX (DAHİLİ İZOLASYON)</span>
+          <h4>Tek Tıkla Geçici Test Masaüstü</h4>
+          <p>
+            Windows Pro işletim sistemlerinde dahili gelen Sandbox özelliği; şüpheli bir e-posta ekini veya dosyayı sıfır riskle açmanızı sağlar. Pencereyi kapattığınız anda sanal makinedeki her şey silinir.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9. Sanal Ağ Modları (Networking) Kılavuzu -->
+  <section class="page-section" id="ag-modlari" style="background: #ffffff; border-top: 1px solid var(--gov-border); border-bottom: 1px solid var(--gov-border);">
+    <div class="container">
+      <div class="section-header-gov">
+        <h3>Sanal Ağ (Virtual Networking) Modları Kılavuzu</h3>
+        <span style="font-size: 12px; color: var(--gov-red); font-weight: 700;">Hangi Durumda Hangi Ağ Modu Seçilmelidir?</span>
+      </div>
+
+      <div class="grid-2">
+        <div style="background: #f8fafc; border: 1px solid var(--gov-border); padding: 18px; border-radius: 3px;">
+          <h4 style="color: var(--gov-red); font-size: 13.5px; font-weight: 800; margin-bottom: 6px;">1. Host-Only (Yalnızca Ana Makine)</h4>
+          <p style="font-size: 12px; color: #334155; line-height: 1.6;">
+            <strong>Çalışma Prensibi:</strong> Sanal makinenin dış internete çıkışı tamamen engellenir. Sadece fiziksel ana makineniz ile sanal makine konuşabilir.<br>
+            <strong>Kullanım Amacı:</strong> Canlı fidye virüsü veya truva atı analiz ederken virüsün dışarıya veri kaçırmasını önlemek için <em>kesinlikle Host-Only</em> seçilmelidir.
+          </p>
+        </div>
+
+        <div style="background: #f8fafc; border: 1px solid var(--gov-border); padding: 18px; border-radius: 3px;">
+          <h4 style="color: var(--gov-blue); font-size: 13.5px; font-weight: 800; margin-bottom: 6px;">2. NAT (Network Address Translation)</h4>
+          <p style="font-size: 12px; color: #334155; line-height: 1.6;">
+            <strong>Çalışma Prensibi:</strong> Sanal makine ana bilgisayarınızın internet bağlantısını kullanarak dış dünyaya erişir; ancak ev ağındaki diğer cihazlar sanal makinenin içine doğrudan erişemez.<br>
+            <strong>Kullanım Amacı:</strong> Kali Linux paket güncellemesi (<code>apt update</code>) yaparken veya TryHackMe / HackTheBox VPN'ine bağlanırken idealdir.
+          </p>
+        </div>
+
+        <div style="background: #f8fafc; border: 1px solid var(--gov-border); padding: 18px; border-radius: 3px;">
+          <h4 style="color: var(--gov-navy); font-size: 13.5px; font-weight: 800; margin-bottom: 6px;">3. Bridged (Köprü Modu)</h4>
+          <p style="font-size: 12px; color: #334155; line-height: 1.6;">
+            <strong>Çalışma Prensibi:</strong> Sanal makine doğrudan evinizdeki modeme kabloyla bağlanmış bağımsız bir cihaz gibi davranır ve modemden doğrudan IP alır (Örn: 192.168.1.45).<br>
+            <strong>Kullanım Amacı:</strong> Ev ağındaki diğer fiziksel cihazları taramak veya sanal makine üzerinde gerçek bir sunucu yayınlamak için kullanılır.
+          </p>
+        </div>
+
+        <div style="background: #f8fafc; border: 1px solid var(--gov-border); padding: 18px; border-radius: 3px;">
+          <h4 style="color: #15803d; font-size: 13.5px; font-weight: 800; margin-bottom: 6px;">4. Internal Network (Dahili İzole Ağ)</h4>
+          <p style="font-size: 12px; color: #334155; line-height: 1.6;">
+            <strong>Çalışma Prensibi:</strong> Yalnızca sizin belirlediğiniz sanal makineler (Örn: Kali ile Metasploitable) kendi arasında konuşur. Ana makinenin bile bu ağa erişimi yoktur.<br>
+            <strong>Kullanım Amacı:</strong> Tamamen izole CTF ve sızma testi müsabakaları kurgulamak için standart seçimdir.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10. İnteraktif Sanal Lab Donanım Hesaplayıcısı -->
+  <section class="page-section" id="lab-hesaplayici">
+    <div class="container">
+      <div class="section-header-gov">
+        <h3>Sanal Laboratuvar Donanım ve Kapasite Hesaplayıcısı</h3>
+        <span style="font-size: 12px; color: var(--gov-red); font-weight: 700;">Bilgisayarınız İçin En Uygun Laboratuvar Mimarisini Hesaplayın</span>
+      </div>
+
+      <div class="calculator-box">
+        <p style="font-size: 12.5px; color: var(--gov-text-muted); margin-bottom: 18px;">
+          Fiziksel bilgisayarınızın RAM miktarını ve işlemci çekirdeğini seçerek, ana sisteminizi kilitlemeden hangi sanal makineleri aynı anda çalıştırabileceğinizi anında öğrenin:
+        </p>
+
+        <div class="calc-row">
+          <div>
+            <label class="calc-label" for="hostRam">Toplam Fiziksel RAM Miktarı:</label>
+            <select id="hostRam" class="calc-select" onchange="calculateVmCapacity()">
+              <option value="4">4 GB RAM (Düşük Donanım)</option>
+              <option value="8" selected>8 GB RAM (Standart Öğrenci Bilgisayarı)</option>
+              <option value="16">16 GB RAM (Orta - İleri Düzey Lab)</option>
+              <option value="32">32 GB ve Üzeri (Profesyonel Kurumsal Lab)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="calc-label" for="hostCpu">İşlemci Çekirdek Sayısı (Cores):</label>
+            <select id="hostCpu" class="calc-select" onchange="calculateVmCapacity()">
+              <option value="2">2 Çekirdek (Çift Çekirdek)</option>
+              <option value="4" selected>4 Çekirdek (Örn: Core i5 / Ryzen 5)</option>
+              <option value="8">8 Çekirdek veya daha fazla (Güçlü İşlemci)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="calc-result-box" id="calcResultDisplay">
+          <!-- Dinamik JS Sonucu -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11. Siber Savunma Kılavuzları -->
+  <section class="page-section" id="siber-savunma" style="background: #ffffff; border-top: 1px solid var(--gov-border); border-bottom: 1px solid var(--gov-border);">
+    <div class="container">
+      <div class="section-header-gov">
+        <h3>Siber Savunma ve Güvenli Kodlama Kılavuzları</h3>
+        <span style="font-size: 12px; color: var(--gov-text-muted);">Sanal Makinelerde Pratik Yapılabilen Savunma Standartları</span>
+      </div>
+
+      <div class="grid-3">
+        <div style="border: 1px solid var(--gov-border); padding: 18px; border-radius: 3px;">
+          <h4 style="font-size: 14px; font-weight: 800; color: var(--gov-navy); margin-bottom: 8px;">🔑 Kaba Kuvvet (Brute Force) Savunması</h4>
+          <p style="font-size: 12px; color: var(--gov-text-muted); line-height: 1.6;">
+            Sanal makinenizde Hydra veya Medusa ile test yaparken; web sunucusuna <strong>Rate Limiting</strong> (dakikada maks 3 hatalı deneme), hesap dondurma ve <strong>2FA/TOTP</strong> kuralı koyarak saldırının nasıl anında engellendiğini test edin.
+          </p>
+        </div>
+
+        <div style="border: 1px solid var(--gov-border); padding: 18px; border-radius: 3px;">
+          <h4 style="font-size: 14px; font-weight: 800; color: var(--gov-navy); margin-bottom: 8px;">💉 SQL Injection & Prepared Statements</h4>
+          <p style="font-size: 12px; color: var(--gov-text-muted); line-height: 1.6;">
+            DVWA sanal makinesinde güvensiz string birleştirme sorgusu yerine <strong>PDO Prepared Statements</strong> (Parametreli Sorgu) kullanarak veritabanı tablolarının şifresiz sızdırılmasını kesin olarak önleyin.
+          </p>
+        </div>
+
+        <div style="border: 1px solid var(--gov-border); padding: 18px; border-radius: 3px;">
+          <h4 style="font-size: 14px; font-weight: 800; color: var(--gov-navy); margin-bottom: 8px;">🧱 Güvenlik Duvarı (Default Deny)</h4>
+          <p style="font-size: 12px; color: var(--gov-text-muted); line-height: 1.6;">
+            Sanal Linux sunucunuzda iptables veya UFW ile <em>"Açıkça izin verilmeyen her şey yasaktır"</em> kuralı uygulayın; Port 21 (FTP), 445 (SMB) ve 3389'un dış dünyaya nasıl <strong>DROP</strong> olduğunu doğrulayın.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 12. İletişim & Topluluk -->
+  <section class="page-section" id="iletisim">
+    <div class="container">
+      <div class="section-header-gov">
+        <h3>Teknik Çalışma Grubu ve İletişim Masası</h3>
+        <span style="font-size: 12px; color: var(--gov-red); font-weight: 700;">Sanal Lab ve Siber Savunma Masası</span>
+      </div>
+
+      <div class="official-form-card">
+        <form id="contactRegForm" onsubmit="handleContactSubmit(event)">
+          <div class="calc-row">
+            <div>
+              <label class="calc-label" for="cName">Ad Soyad *</label>
+              <input type="text" id="cName" class="input-gov" placeholder="" required>
+            </div>
+            <div>
+              <label class="calc-label" for="cEmail">E-Posta Adresi *</label>
+              <input type="email" id="cEmail" class="input-gov" placeholder="ornek@alanadi.com" required>
+            </div>
+          </div>
+
+          <div class="calc-row">
+            <div>
+              <label class="calc-label" for="cVmInterest">İlgilendiğiniz Sanallaştırma Alanı:</label>
+              <select id="cVmInterest" class="input-gov">
+                <option value="Kali Linux ile Sızma Testi ve CTF">Kali Linux ile Sızma Testi ve CTF</option>
+                <option value="FlareVM / REMnux ile Malware Analizi">FlareVM / REMnux ile Malware Analizi</option>
+                <option value="VirtualBox / VMware Ağ Kurguları">VirtualBox / VMware Ağ Kurguları</option>
+                <option value="Proxmox / ESXi Kurumsal Sunucu Mimarisi">Proxmox / ESXi Kurumsal Sunucu Mimarisi</option>
+              </select>
+            </div>
+            <div>
+              <label class="calc-label" for="cLevel">Öğrenim Seviyeniz:</label>
+              <select id="cLevel" class="input-gov">
+                <option value="11. Sınıf Meslek Lisesi Öğrencisi">11. Sınıf Meslek Lisesi Öğrencisi (Siber Güvenlik / Bilişim)</option>
+                <option value="Üniversite Bilişim Öğrencisi">Üniversite Bilişim Öğrencisi</option>
+                <option value="Bilişim Öğretmeni / Eğitmen">Bilişim Öğretmeni / Eğitmen</option>
+                <option value="Yeni Başlayan">Yeni Başlayan / Meraklı</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 16px;">
+            <label class="calc-label" for="cMessage">Mesajınız veya Çalışmak İstediğiniz Sanal Lab Projesi:</label>
+            <textarea id="cMessage" class="input-gov" rows="3" placeholder="Sanal makine kurguları, CTF yarışmaları veya merak ettiğiniz teknik soruları yazabilirsiniz..."></textarea>
+          </div>
+
+          <button type="submit" class="btn-submit-gov">
+            🚀 Başvuruyu ve Kaydı Tamamla
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="gov-footer">
+    <div class="container">
+      <div class="footer-grid-gov">
+        <div class="footer-col">
+          <h5>d3xsyl</h5>
+          <p style="line-height: 1.7; margin-bottom: 12px;">
+            Sanal makine mimarisi, izole laboratuvar kurguları, tersine mühendislik ve siber güvenlik savunma tekniklerini aktaran resmi teknik portal.
+          </p>
+          <div style="color: #64748b; font-size: 11px;">
+            Siber Güvenlik ve Sanallaştırma Portalı | 2026
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h5>RESMİ İNDİRMELER</h5>
+          <ul class="footer-links-list">
+            <li><a href="https://www.kali.org/get-kali/#kali-virtual-machines" target="_blank">Kali Linux VM (.ova)</a></li>
+            <li><a href="https://www.virtualbox.org/wiki/Downloads" target="_blank">Oracle VirtualBox</a></li>
+            <li><a href="https://github.com/mandiant/flare-vm" target="_blank">Mandiant FlareVM</a></li>
+            <li><a href="https://docs.remnux.org/install-distro/get-virtual-appliance" target="_blank">REMnux Appliance</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h5>SANAL AĞ VE REHBERLER</h5>
+          <ul class="footer-links-list">
+            <li><a href="#ag-modlari">Host-Only Karantina Ağı</a></li>
+            <li><a href="#ag-modlari">NAT ve Bridged Farkı</a></li>
+            <li><a href="#siber-savunma">Kaba Kuvvet & 2FA</a></li>
+            <li><a href="#lab-hesaplayici">Lab Hesaplayıcı</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h5>GÜVENLİK & SÜRÜM</h5>
+          <p style="line-height: 1.6; margin-bottom: 8px;">
+            <strong>Platform:</strong> d3xsyl<br>
+            <strong>Çalışma:</strong> %100 Çevrimdışı (No Python, No Localhost)<br>
+            <strong>Bütünlük:</strong> SHA-256 Doğrulanmış Repolar
+          </p>
+          <a href="#resmi-indirme-masasi" class="btn-quick btn-quick-red" style="font-size: 11px; padding: 5px 12px; display: inline-block;">
+            📥 İndirme Deposu
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-bottom-gov">
+        <div>&copy; 2026 d3xsyl. Tüm hakları saklıdır.</div>
+        <div>Milli Siber Savunma ve Sanallaştırma Standartları ile Uyumlu Teknik Referans. 🇹🇷</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JAVASCRIPT MANTIĞI & LAB HESAPLAYICISI -->
+  <script>
+    function updateDate() {
+      const now = new Date();
+      const options = { day: 'numeric', month: 'long', year: 'numeric', weekday: 'long' };
+      const str = now.toLocaleDateString('tr-TR', options);
+      const el = document.getElementById('liveDateStr');
+      if (el) el.innerText = str;
+    }
+
+    let currentFontSize = 13.5;
+    function changeFontSize(delta) {
+      currentFontSize = Math.max(12, Math.min(18, currentFontSize + delta));
+      document.body.style.fontSize = currentFontSize + 'px';
+    }
+
+    // Donanım & Lab Kapasite Hesaplayıcısı
+    function calculateVmCapacity() {
+      const ram = parseInt(document.getElementById('hostRam').value);
+      const cpu = parseInt(document.getElementById('hostCpu').value);
+      const display = document.getElementById('calcResultDisplay');
+
+      let vmCombo = "";
+      let statusColor = "#0284c7";
+
+      if (ram === 4) {
+        vmCombo = `
+          <strong>Önerilen Lab Yapılandırması:</strong><br>
+          • 1 Adet Hafif Linux (Parrot Home veya Metasploitable 2) - <strong>1 GB RAM & 1 Core</strong>.<br>
+          • Ana makinenize (Windows) <strong>3 GB RAM</strong> kalır.<br>
+          ⚠️ <em>Tavsiye: Aynı anda hem Kali hem FlareVM çalıştırmayınız. Hafif dağıtımları tercih ediniz.</em>
+        `;
+        statusColor = "#d97706";
+      } else if (ram === 8) {
+        vmCombo = `
+          <strong>Önerilen Lab Yapılandırması (İdeal Öğrenci Standardı):</strong><br>
+          • 1 Adet <strong>Kali Linux</strong> (2 GB RAM & 2 Core)<br>
+          • 1 Adet <strong>Metasploitable 2 (Hedef Makine)</strong> (1 GB RAM & 1 Core)<br>
+          • Ana makinenize (Windows) rahat nefes alması için <strong>5 GB RAM</strong> kalır.<br>
+          ✅ <em>Sonuç: Hem saldırgan hem hedef sanal makineyi aynı anda açıp 'Internal Network' modunda güvenle CTF çalışabilirsiniz.</em>
+        `;
+        statusColor = "#15803d";
+      } else if (ram === 16) {
+        vmCombo = `
+          <strong>Önerilen Lab Yapılandırması (Gelişmiş Laboratuvar):</strong><br>
+          • 1 Adet <strong>FlareVM (Malware Analizi için Windows)</strong> (4 GB RAM & 2 Core)<br>
+          • 1 Adet <strong>Kali Linux</strong> (3 GB RAM & 2 Core)<br>
+          • 1 Adet <strong>Metasploitable Hedef Sunucu</strong> (1 GB RAM & 1 Core)<br>
+          • Ana makinenize <strong>8 GB RAM</strong> kalır.<br>
+          🚀 <em>Sonuç: Üç sanal makineyi aynı anda çalıştırabilir, profesyonel seviyede sızma testi ve zararlı analizi yapabilirsiniz.</em>
+        `;
+        statusColor = "#15803d";
+      } else if (ram >= 32) {
+        vmCombo = `
+          <strong>Önerilen Lab Yapılandırması (Kurumsal Seviye SOC / Range):</strong><br>
+          • Active Directory Domain Controller (Windows Server - 4 GB)<br>
+          • SIEM / Log Sunucusu (Splunk / Wazuh - 6 GB)<br>
+          • 2 Adet Windows İstemci (4 GB her biri)<br>
+          • Kali Linux Savunma & Saldırı Terminali (4 GB)<br>
+          • Ana makinenize <strong>10+ GB RAM</strong> kalır.<br>
+          👑 <em>Sonuç: Bütün bir şirket ağını (Kurumsal Active Directory + SIEM + Saldırgan) tek bilgisayarda simüle edebilirsiniz.</em>
+        `;
+        statusColor = "#0284c7";
+      }
+
+      display.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <h4 style="color: var(--gov-navy); font-size: 13.5px; font-weight: 800;">🎯 Donanım Kapasite Analiz Raporu:</h4>
+          <span style="font-size: 11px; font-weight: 700; color: ${statusColor}; background: white; padding: 2px 8px; border-radius: 2px; border: 1px solid ${statusColor};">
+            ${ram} GB RAM / ${cpu} Çekirdek
+          </span>
+        </div>
+        <div style="font-size: 12px; color: #334155; line-height: 1.7;">
+          ${vmCombo}
+        </div>
+      `;
+    }
+
+    function handleContactSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('cName').value;
+      const interest = document.getElementById('cVmInterest').value;
+      alert(`🎉 Tebrikler ${name}!\n\nSiber güvenlik ve sanallaştırma çalışma grubuna kaydınız alındı.\nİlgi Alanınız: ${interest}\n\nTeknik materyaller ve indirme rehberleri sisteminize tanımlandı.`);
+      document.getElementById('contactRegForm').reset();
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      updateDate();
+      calculateVmCapacity();
+    });
+  </script>
+</body>
+</html>
